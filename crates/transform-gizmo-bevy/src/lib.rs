@@ -491,6 +491,8 @@ fn update_gizmos(
     let mut target_entities: Vec<Entity> = vec![];
     let mut target_transforms: Vec<Transform> = vec![];
 
+    println!("oo");
+
     for (entity, global_transform, mut target_transform, mut gizmo_target) in &mut q_targets {
         target_entities.push(entity);
         target_transforms.push(*target_transform);

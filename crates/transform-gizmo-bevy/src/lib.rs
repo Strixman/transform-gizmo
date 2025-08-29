@@ -380,7 +380,7 @@ pub struct GizmoDragging;
 fn update_gizmos(
     q_window: Query<&Window, With<PrimaryWindow>>,
     q_gizmo_camera: Query<(&Camera, &GlobalTransform), With<GizmoCamera>>,
-    mut q_targets: Query<(Entity, &mut Transform, &mut GizmoTarget), Without<GizmoCamera>>,
+    mut q_targets: Query<(Entity, &GlobalTransform, &mut Transform, &mut GizmoTarget), Without<GizmoCamera>>,
     mut drag_started: EventReader<GizmoDragStarted>,
     mut dragging: EventReader<GizmoDragging>,
     gizmo_options: Res<GizmoOptions>,
@@ -491,7 +491,7 @@ fn update_gizmos(
     let mut target_entities: Vec<Entity> = vec![];
     let mut target_transforms: Vec<Transform> = vec![];
 
-    for (entity, mut target_transform, mut gizmo_target) in &mut q_targets {
+    for (entity, global_transform, mut target_transform, mut gizmo_target) in &mut q_targets {
         target_entities.push(entity);
         target_transforms.push(*target_transform);
 
@@ -519,7 +519,7 @@ fn update_gizmos(
         let gizmo_result = gizmo.update(
             gizmo_interaction,
             &[math::Transform {
-                translation: target_transform.translation.as_dvec3().into(),
+                translation: (Vec3::ZERO).as_dvec3().into(),
                 rotation: target_transform.rotation.as_dquat().into(),
                 scale: target_transform.scale.as_dvec3().into(),
             }],
@@ -563,7 +563,7 @@ fn update_gizmos(
 
         let is_focused = gizmo.is_focused();
 
-        for (i, (_, mut target_transform, mut gizmo_target)) in q_targets.iter_mut().enumerate() {
+        for (i, (_, _, mut target_transform, mut gizmo_target)) in q_targets.iter_mut().enumerate() {
             gizmo_target.is_active = gizmo_result.is_some();
             gizmo_target.is_focused = is_focused;
 
